@@ -15,6 +15,18 @@ class UserFitApi {
     return userFitCollection.doc(date).snapshots();
   }
 
+  Stream<QuerySnapshot>? getUserFitHistoryAsStream({int count=7}) {
+    try {
+      return userFitCollection
+          .orderBy("date", descending: true)
+          .limit(count)
+          .snapshots();
+    } catch (e) {
+      showAppSnackbar(title: "", message: e.toString());
+    }
+    return null;
+  }
+
   Future<UserFitModel?> getUserFit({required String date}) async {
     try {
       DocumentSnapshot doc = await userFitCollection.doc(date).get();
