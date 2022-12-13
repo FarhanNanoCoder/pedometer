@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pedometer/core/functions.dart';
 import 'package:pedometer/models/userModel.dart';
+
 class UserApi {
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
@@ -12,23 +13,29 @@ class UserApi {
     return _auth.signOut();
   }
 
-  Future<UserCredential?> createAuthUserWithEmailAndPassword({required UserModel userModel,required String password})async{
-    try{
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: userModel.email??"", password: password);
-      if(userCredential.user!=null){
+  Future<UserCredential?> createAuthUserWithEmailAndPassword(
+      {required UserModel userModel, required String password}) async {
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+              email: userModel.email ?? "", password: password);
+      if (userCredential.user != null) {
+        userModel.id = userCredential.user?.uid ?? "";
         await createUser(user: userModel);
         return userCredential;
       }
-    }catch(e){
+    } catch (e) {
       showAppSnackbar(title: "", message: e.toString());
     }
   }
 
-  Future<UserCredential?> signInUser({required String email, required String password})async{
-    try{
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
-       return userCredential;
-    }catch(e){
+  Future<UserCredential?> signInUser(
+      {required String email, required String password}) async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      return userCredential;
+    } catch (e) {
       showAppSnackbar(title: "", message: e.toString());
     }
   }
@@ -42,8 +49,7 @@ class UserApi {
   }
 
   Future createUser({required UserModel user}) async {
-    return usersCollection.doc(user.id).set(user.toMap()).then((value) {
-    });
+    return usersCollection.doc(user.id).set(user.toMap()).then((value) {});
   }
 
   Future setUser({required UserModel user}) async {

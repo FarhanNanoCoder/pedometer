@@ -44,6 +44,9 @@ dependencies:
   get: ^4.6.5
   cached_network_image: ^3.2.2
   email_validator: ^2.1.17
+  sensors_plus: ^2.0.1
+  csv: ^5.0.1
+  external_path: ^1.0.3
 
 dev_dependencies:
   flutter_test:

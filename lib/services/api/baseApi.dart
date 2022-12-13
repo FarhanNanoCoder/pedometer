@@ -1,4 +1,5 @@
 import 'package:pedometer/services/api/userApi.dart';
+import 'package:pedometer/services/api/userFitApi.dart';
 
 class BaseApi {
 
@@ -10,4 +11,5 @@ class BaseApi {
   }
 
   UserApi userApi = UserApi();
+  UserFitApi userFitApi = UserFitApi();
 }

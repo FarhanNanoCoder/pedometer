@@ -8,8 +8,9 @@ class AppColors {
   AppColors._internal();
 
   Color white = Colors.white;
-  Color themeColor = const Color(0xFF06283D);
-  Color themeDark = const Color(0xFF263238);
+  Color themeColor = const Color(0xFF2F2E41);
+  Color themeDark = const Color(0xFF2F2E41);
+  Color themeLight = const Color(0xFFFF865E);
   Color grey900 = (Colors.grey[900])!;
   Color grey800 = (Colors.grey[800])!;
   Color grey = (Colors.grey[200])!;
@@ -20,8 +21,7 @@ class AppColors {
       grey100 = (Colors.grey[100])!,
       red = Colors.redAccent,
       themeHappy = const Color(0xFFFFAB76),
-      themeLight = const Color(0xFFEFF3F2),
-        themeMatteBlue = Color.fromARGB(255, 50, 78, 92),
+      themeMatteBlue = Color.fromARGB(255, 50, 78, 92),
       // themeGood = const Color(0xFFFF8474),
       // themeOkay = const Color(0xFF14B9C5),
       // themeSad = const Color(0xFF6B4F4F),

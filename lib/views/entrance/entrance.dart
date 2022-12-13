@@ -38,16 +38,22 @@ class _EntranceState extends State<Entrance> {
               const SizedBox(
                 height: 44,
               ),
+              AppText(text: "Healthy Fit", style: 'bold', size: 36).getText(),
+              const SizedBox(
+                height: 44,
+              ),
               AppButton(context: context).getTextButton(
                   title: "Login",
+                  size: Size(MediaQuery.of(context).size.width, 72),
                   onPressed: () {
                     Get.to(Authentication(isLoginState: true));
                   }),
               const SizedBox(
-                height: 24,
+                height: 16,
               ),
               AppButton(context: context).getTextButton(
                   title: "Register",
+                  size: Size(MediaQuery.of(context).size.width, 72),
                   onPressed: () {
                     Get.to(Authentication(isLoginState: false));
                   }),

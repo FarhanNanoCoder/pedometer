@@ -79,10 +79,11 @@ class _AuthenticationState extends State<Authentication> {
               Get.back();
             },
           ),
-          SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: Column(
-              children: [getAuthForm()],
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              child: getAuthForm(),
             ),
           )
         ],

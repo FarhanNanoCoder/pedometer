@@ -25,19 +25,13 @@ class UserController extends GetxController {
   _setUserStatus(User? user) async {
     userLoader.value = true;
     if (user == null) {
-      //logout
       Get.offAll(Entrance());
     } else {
       Get.to(Home());
-      // var temp = await baseApi.userApi.getUser(user.uid);
-      // if (temp != null) {
-      //   authUser.value = temp;
-      // }
     }
 
     userLoader.value = false;
   }
-
 
   void handleSignOut() async {
     await baseApi.userApi.signOutUser();
@@ -47,22 +41,6 @@ class UserController extends GetxController {
     // currentUser.value = await baseApi.userApi.getUser(id);
   }
 
-  void getAuthUser() async {
-    // userLoader.value = true;
-    // var temp = await baseApi.userApi
-    //     .getUser(FirebaseAuth.instance.currentUser?.uid ?? "");
-    // if (temp != null) {
-    //   authUser.value = temp;
-    // }else{
-    //   showAppSnackbar(title: "", message: "Something went wrong. Please try again");
-    // }
-    // userLoader.value = false;
-  }
-
   void setUser(UserModel userModel) async {
-    // userLoader.value = true;
-    // await baseApi.userApi.setUser(user: userModel);
-    // userLoader.value = false;
-    // getAuthUser();
   }
 }
