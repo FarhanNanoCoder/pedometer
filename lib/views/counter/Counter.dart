@@ -5,6 +5,7 @@ import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pedometer/core/appButtons.dart';
+import 'package:pedometer/core/appColors.dart';
 import 'package:pedometer/core/appText.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
@@ -59,19 +60,11 @@ class _CounterState extends State<Counter> {
           "mag_delta": mag - prevMag,
           "original_steps": stepsManual.value
         });
-        // var tempMode = mode;
-        // if (y - prevY >= 0.762 && z - prevZ <= 0.0762) {
-        //   //2.5 feet in moving axis, 3 inch in perpendicuar axis
-        //   tempMode.value = "Walking and holding the phone in hand";
-        // } else {
-        //   tempMode.value = "Holding";
-        // }
-        if (magDelta > 5.5) {
+        if (magDelta > 5) {
           steps.value++;
         }
         prevMag = mag;
         prevX = xAcc;
-        // mode = tempMode;
         prevY = yAcc;
         prevZ = zAcc;
       }
@@ -136,51 +129,70 @@ class _CounterState extends State<Counter> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            AppText(text: 'Counter', style: 'bold', size: 18).getText(),
+            AppText(text: 'Counter', style: 'bold', size: 24).getText(),
             const SizedBox(
               height: 36,
             ),
             Obx(() => Center(
                 child: AppText(text: steps.toString(), size: 48, style: 'bold')
                     .getText())),
-            Obx((() => Center(
-                    child: AppText(
-                  text: mode.value,
-                  size: 16,
-                ).getText()))),
+            AppText(text: "steps have been counted", size: 12).getText(),
             const SizedBox(
               height: 24,
             ),
-            AppButton(context: context).getOutlinedTextButtton(
-                title: start ? "Stop" : "Start",
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 1,
+                  color: AppColors().grey200,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Center(
+                  child:
+                      AppText(text: start ? "Walking" : "Holding").getText()),
+            ),
+            const SizedBox(
+              height: 72,
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * .5,
+              height: MediaQuery.of(context).size.width * .5,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 1,
+                  color: AppColors().grey300,
+                ),
+                borderRadius: BorderRadius.circular(
+                     MediaQuery.of(context).size.width * .5),
+              ),
+              child: Center(
+                child: Icon(
+                  start?Icons.directions_walk_outlined :Icons.mode_standby_outlined,
+                  size: 72,
+                  color: start?AppColors().themeLight:AppColors().grey800,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 96,
+            ),
+            AppButton(context: context).getTextButton(
+                size: Size(MediaQuery.of(context).size.width, 96),
+                backgroundColor: start?AppColors().red:AppColors().themeLight,
+                title: start ? "End session" : "Start session",
                 onPressed: () {
+                  
                   setState(() {
                     start = !start;
                   });
+                  resetValues();
                 }),
-            const SizedBox(
-              height: 24,
-            ),
-            AppButton(context: context).getOutlinedTextButtton(
-              title: "Reset",
-              onPressed: resetValues,
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            AppButton(context: context)
-                .getOutlinedTextButtton(title: "Save", onPressed: saveData),
-            const SizedBox(
-              height: 24,
-            ),
-            Obx(() => AppButton(context: context).getTextButton(
-                size: Size(MediaQuery.of(context).size.width, 800),
-                title: "Count($stepsManual)",
-                onPressed: () {
-                  stepsManual.value++;
-                })),
           ],
         ),
       ),
