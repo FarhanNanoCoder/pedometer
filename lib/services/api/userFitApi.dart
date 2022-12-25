@@ -11,15 +11,18 @@ class UserFitApi {
       .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
       .collection("userFit");
 
-  Stream<DocumentSnapshot> getUserFitAsStream({required String date}) {
-    return userFitCollection.doc(date).snapshots();
+  Stream<DocumentSnapshot> getUserFitAsStream({required String id}) {
+    return userFitCollection.doc(id).snapshots();
   }
 
-  Stream<QuerySnapshot>? getUserFitHistoryAsStream({int count=7}) {
+  Stream<QuerySnapshot>? getUserFitHistoryAsStream({int count = 7}) {
     try {
+      final Timestamp now = Timestamp.fromDate(DateTime.now());
+      final Timestamp lastDay =
+          Timestamp.fromDate(DateTime.now().subtract(Duration(days: count)));
       return userFitCollection
-          .orderBy("date", descending: true)
-          .limit(count)
+          // .orderBy("date", descending: true)
+          .where('timestamp', isLessThan: now, isGreaterThan: lastDay)
           .snapshots();
     } catch (e) {
       showAppSnackbar(title: "", message: e.toString());
@@ -27,9 +30,9 @@ class UserFitApi {
     return null;
   }
 
-  Future<UserFitModel?> getUserFit({required String date}) async {
+  Future<UserFitModel?> getUserFit({required String id}) async {
     try {
-      DocumentSnapshot doc = await userFitCollection.doc(date).get();
+      DocumentSnapshot doc = await userFitCollection.doc(id).get();
       if (doc.exists) {
         return UserFitModel.fromDocumentSnapshot(doc);
       } else {
@@ -43,7 +46,7 @@ class UserFitApi {
   Future setUserFit({required UserFitModel userFitModel}) async {
     try {
       await userFitCollection
-          .doc(userFitModel.date ?? "")
+          .doc(userFitModel.id ?? "")
           .set(userFitModel.toMap());
     } catch (e) {
       showAppSnackbar(title: "", message: e.toString());

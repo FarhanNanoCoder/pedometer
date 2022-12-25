@@ -27,9 +27,23 @@ class UserController extends GetxController {
     if (user == null) {
       Get.offAll(Entrance());
     } else {
+      getAuthUser();
       Get.to(Home());
     }
 
+    userLoader.value = false;
+  }
+
+  void getAuthUser() async {
+    userLoader.value = true;
+    var temp = await baseApi.userApi
+        .getUser(FirebaseAuth.instance.currentUser?.uid ?? "");
+    if (temp != null) {
+      authUser.value = temp;
+    } else {
+      showAppSnackbar(
+          title: "", message: "Something went wrong. Please try again");
+    }
     userLoader.value = false;
   }
 
@@ -38,9 +52,12 @@ class UserController extends GetxController {
   }
 
   void getUser(String id) async {
-    // currentUser.value = await baseApi.userApi.getUser(id);
   }
 
   void setUser(UserModel userModel) async {
+    userLoader.value = true;
+    await baseApi.userApi.setUser(user: userModel);
+    userLoader.value = false;
+    getAuthUser();
   }
 }

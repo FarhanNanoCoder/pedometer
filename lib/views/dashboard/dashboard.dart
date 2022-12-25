@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,7 +19,6 @@ class DashBoard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-         
             const SizedBox(
               height: 24,
             ),
@@ -30,9 +30,8 @@ class DashBoard extends StatelessWidget {
               height: 44,
             ),
             StreamBuilder(
-                
                 stream: BaseApi().userFitApi.getUserFitAsStream(
-                    date: DateTime.now().toString().substring(0, 10)),
+                    id: DateTime.now().toString().substring(0, 10)),
                 builder: ((context, snapshot) {
                   if (!snapshot.hasData ||
                       snapshot.connectionState == ConnectionState.waiting) {
@@ -97,7 +96,14 @@ class DashBoard extends StatelessWidget {
                                   children: [
                                     AppText(
                                             text: userFitModel.distanceWalked
-                                                .toString(),
+                                                        .toString()
+                                                        .length >
+                                                    6
+                                                ? userFitModel.distanceWalked
+                                                    .toString()
+                                                    .substring(0, 6)
+                                                : userFitModel.distanceWalked
+                                                    .toString(),
                                             size: 24,
                                             color: AppColors().themeColor,
                                             style: 'bold')
@@ -131,7 +137,14 @@ class DashBoard extends StatelessWidget {
                                   children: [
                                     AppText(
                                             text: userFitModel.caloriesBurnt
-                                                .toString(),
+                                                        .toString()
+                                                        .length >
+                                                    6
+                                                ? userFitModel.caloriesBurnt
+                                                    .toString()
+                                                    .substring(0, 6)
+                                                : userFitModel.caloriesBurnt
+                                                    .toString(),
                                             size: 24,
                                             color: AppColors().themeColor,
                                             style: 'bold')
@@ -154,8 +167,10 @@ class DashBoard extends StatelessWidget {
                     } else {
                       BaseApi().userFitApi.setUserFit(
                               userFitModel: UserFitModel(
+                            timestamp: Timestamp.fromDate(DateTime.parse(
+                                DateTime.now().toString().substring(0, 10))),
                             uid: FirebaseAuth.instance.currentUser?.uid ?? "",
-                            date: DateTime.now().toString().substring(0, 10),
+                            id: DateTime.now().toString().substring(0, 10),
                           ));
                       return CircularProgressIndicator(
                         strokeWidth: 2,
@@ -165,7 +180,6 @@ class DashBoard extends StatelessWidget {
                     }
                   }
                 })),
-           
           ],
         ),
       ),

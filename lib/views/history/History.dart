@@ -73,7 +73,7 @@ class History extends StatelessWidget {
                                         children: [
                                           AppText(
                                                   text:
-                                                      "${userFitModel.date ?? ""}:")
+                                                      "${userFitModel.id ?? ""}:")
                                               .getText(),
                                           const SizedBox(
                                             width: 4,
@@ -88,8 +88,17 @@ class History extends StatelessWidget {
                                           ).getText(),
                                           AppText(
                                                   text: userFitModel
-                                                      .caloriesBurnt
-                                                      .toString(),
+                                                              .caloriesBurnt
+                                                              .toString()
+                                                              .length >
+                                                          4
+                                                      ? userFitModel
+                                                          .caloriesBurnt
+                                                          .toString()
+                                                          .substring(0, 4)
+                                                      : userFitModel
+                                                          .caloriesBurnt
+                                                          .toString(),
                                                   style: 'semibold')
                                               .getText(),
                                           AppText(
@@ -97,8 +106,17 @@ class History extends StatelessWidget {
                                           ).getText(),
                                           AppText(
                                                   text: userFitModel
-                                                      .caloriesBurnt
-                                                      .toString(),
+                                                              .distanceWalked
+                                                              .toString()
+                                                              .length >
+                                                          5
+                                                      ? userFitModel
+                                                          .distanceWalked
+                                                          .toString()
+                                                          .substring(0, 5)
+                                                      : userFitModel
+                                                          .distanceWalked
+                                                          .toString(),
                                                   style: 'semibold')
                                               .getText(),
                                           AppText(
@@ -130,7 +148,7 @@ class History extends StatelessWidget {
                                   AppText(text: "Distance: ").getText(),
                                   AppText(
                                           text:
-                                              "${totalDistanceWalked.toString()} km",
+                                              "${totalDistanceWalked.toString().length > 5 ? totalDistanceWalked.toString().substring(0, 5) : totalDistanceWalked.toString()} km",
                                           style: 'semibold')
                                       .getText(),
                                 ],
@@ -158,7 +176,13 @@ class History extends StatelessWidget {
                                             size: 14)
                                         .getText(),
                                     AppText(
-                                      text: totalCaloriesBurnt.toString(),
+                                      text:
+                                          totalCaloriesBurnt.toString().length >
+                                                  5
+                                              ? totalCaloriesBurnt
+                                                  .toString()
+                                                  .substring(0, 5)
+                                              : totalCaloriesBurnt.toString(),
                                       style: 'bold',
                                       size: 24,
                                       color: AppColors().themeColor,
@@ -207,7 +231,7 @@ class History extends StatelessWidget {
                                               UserFitModel.fromDocumentSnapshot(
                                                       element)
                                                   .steps;
-                                          monthCaloriesBurnt =
+                                          monthCaloriesBurnt +=
                                               UserFitModel.fromDocumentSnapshot(
                                                       element)
                                                   .caloriesBurnt;
@@ -267,8 +291,14 @@ class History extends StatelessWidget {
                                                     .getText(),
                                                 AppText(
                                                         size: 14,
-                                                        text:
-                                                            monthDistanceWalked
+                                                        text: monthDistanceWalked
+                                                                    .toString()
+                                                                    .length >
+                                                                5
+                                                            ? monthDistanceWalked
+                                                                .toString()
+                                                                .substring(0, 5)
+                                                            : monthDistanceWalked
                                                                 .toString(),
                                                         style: 'semibold',
                                                         color:
@@ -290,7 +320,14 @@ class History extends StatelessWidget {
                                                 AppText(
                                                         size: 14,
                                                         text: monthCaloriesBurnt
-                                                            .toString(),
+                                                                    .toString()
+                                                                    .length >
+                                                                4
+                                                            ? monthCaloriesBurnt
+                                                                .toString()
+                                                                .substring(0, 4)
+                                                            : monthCaloriesBurnt
+                                                                .toString(),
                                                         style: 'semibold',
                                                         color:
                                                             AppColors().white)
