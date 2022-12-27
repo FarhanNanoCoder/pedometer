@@ -178,10 +178,10 @@ class History extends StatelessWidget {
                                     AppText(
                                       text:
                                           totalCaloriesBurnt.toString().length >
-                                                  5
+                                                  10
                                               ? totalCaloriesBurnt
                                                   .toString()
-                                                  .substring(0, 5)
+                                                  .substring(0, 10)
                                               : totalCaloriesBurnt.toString(),
                                       style: 'bold',
                                       size: 24,
@@ -294,10 +294,10 @@ class History extends StatelessWidget {
                                                         text: monthDistanceWalked
                                                                     .toString()
                                                                     .length >
-                                                                5
+                                                                8
                                                             ? monthDistanceWalked
                                                                 .toString()
-                                                                .substring(0, 5)
+                                                                .substring(0, 8)
                                                             : monthDistanceWalked
                                                                 .toString(),
                                                         style: 'semibold',
@@ -313,21 +313,14 @@ class History extends StatelessWidget {
                                                 AppText(
                                                         size: 14,
                                                         text:
-                                                            "Calories burnt (cal): ",
+                                                            "Calories burnt (kcal): ",
                                                         color:
                                                             AppColors().white)
                                                     .getText(),
                                                 AppText(
                                                         size: 14,
-                                                        text: monthCaloriesBurnt
-                                                                    .toString()
-                                                                    .length >
-                                                                4
-                                                            ? monthCaloriesBurnt
-                                                                .toString()
-                                                                .substring(0, 4)
-                                                            : monthCaloriesBurnt
-                                                                .toString(),
+                                                        text:
+                                                            "${monthCaloriesBurnt.toString().length > 8 ? (monthCaloriesBurnt * .001).toString().substring(0, 8) : (monthCaloriesBurnt*.001).toString()}",
                                                         style: 'semibold',
                                                         color:
                                                             AppColors().white)

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 class UserModel {
-  late String? id, dob, name, email, phone;
+  late String? id, dob, name, email, phone,gender;
   late int role;
   late double weight, age, height;
 
@@ -16,6 +16,7 @@ class UserModel {
       this.weight = 0.0,
       this.age = 0.0,
       this.height = 0.0,
+      this.gender,
       this.role = 0});
 
   factory UserModel.fromDocumentSnapshot(DocumentSnapshot doc) {
@@ -27,6 +28,7 @@ class UserModel {
       role: map['role'] ?? 0,
       id: map['id'] ?? "",
       dob: map['dob'] ?? "",
+      gender: map['gender'] ?? "",
       age: map['age'] ?? 0.0,
       height: map['height'] ?? 0.0,
       weight: map['weight'] ?? 0.0,
@@ -42,6 +44,7 @@ class UserModel {
     map['id'] = id;
     map['dob'] = dob;
     map['age'] = age;
+    map['gender'] = gender;
     map['height'] = height;
     map['weight'] = weight;
     return map;

@@ -47,6 +47,8 @@ dependencies:
   sensors_plus: ^2.0.1
   csv: ^5.0.1
   external_path: ^1.0.3
+  connectivity_plus: ^3.0.2
+  syncfusion_flutter_charts: ^20.4.38
 
 dev_dependencies:
   flutter_test:

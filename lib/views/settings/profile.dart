@@ -16,20 +16,27 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final _formKey = GlobalKey<FormState>();
+  String dob = "";
   final UserController userController = Get.find(tag: 'uc-0');
+  List<String> genderList = ["Male", "Female", "Other"];
+  String selectedGender = "";
   final _nameController = TextEditingController(),
       _phoneController = TextEditingController(),
       _weightController = TextEditingController(),
-      _ageController = TextEditingController(),
       _heightController = TextEditingController();
   @override
   void initState() {
     super.initState();
     _nameController.text = userController.authUser.value?.name ?? "";
     _phoneController.text = userController.authUser.value?.phone ?? "";
-    _ageController.text = userController.authUser.value?.age.toString() ?? "0";
-    _heightController.text = userController.authUser.value?.height.toString() ?? "0";
-    _weightController.text = userController.authUser.value?.weight.toString() ?? "0";
+    _heightController.text =
+        userController.authUser.value?.height.toString() ?? "0";
+    _weightController.text =
+        userController.authUser.value?.weight.toString() ?? "0";
+    setState(() {
+      dob = userController.authUser.value?.dob ?? "";
+      selectedGender = userController.authUser.value?.gender ?? "";
+    });
     userController.getAuthUser();
   }
 
@@ -37,7 +44,6 @@ class _ProfileState extends State<Profile> {
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
-    _ageController.dispose();
     _weightController.dispose();
     _heightController.dispose();
 
@@ -50,8 +56,8 @@ class _ProfileState extends State<Profile> {
 
       userController.authUser.value?.name = _nameController.text.trim();
       userController.authUser.value?.phone = _phoneController.text.trim();
-      userController.authUser.value?.age =
-          double.parse(_ageController.text.trim());
+      userController.authUser.value?.dob = dob;
+      userController.authUser.value?.gender = selectedGender;
       userController.authUser.value?.weight =
           double.parse(_weightController.text.trim());
       userController.authUser.value?.height =
@@ -128,19 +134,52 @@ class _ProfileState extends State<Profile> {
           const SizedBox(
             height: 24,
           ),
-          AppInputField(
-            label: 'Phone',
-            textEditingController: _phoneController,
-            goNextOnComplete: true,
-          ).getField(context),
-          const SizedBox(
-            height: 24,
+        
+          GestureDetector(
+            onTap: () async {
+              // showAppSnackbar(title: "", message: "hi");
+              DateTime? date = await showDatePicker(
+                context: context,
+                initialDate: DateTime.parse(dob),
+                firstDate: DateTime(1960, 1, 1, 1),
+                lastDate: DateTime.now(),
+              );
+
+              if (date != null) {
+                setState(() {
+                  dob = date.toString().substring(0, 10);
+                });
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(width: 1, color: AppColors().grey300),
+                  borderRadius: BorderRadius.circular(8)),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today_outlined,
+                        color: AppColors().grey800,
+                      ),
+                      const SizedBox(
+                        width: 16,
+                      ),
+                      AppText(
+                              text: dob != "" ? dob : "Select date",
+                              color: dob != ""
+                                  ? AppColors().grey800
+                                  : AppColors().grey600)
+                          .getText(),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-          AppInputField(
-            label: 'Age',
-            textEditingController: _ageController,
-            goNextOnComplete: true,
-          ).getField(context),
           const SizedBox(
             height: 24,
           ),
@@ -159,6 +198,27 @@ class _ProfileState extends State<Profile> {
             goNextOnComplete: true,
             textInputType: TextInputType.number,
           ).getField(context),
+          const SizedBox(
+            height: 36,
+          ),
+          DropdownButtonFormField(
+              value: selectedGender==""?null:selectedGender,
+              decoration: AppInputField.getDefaultInputDecoration(
+                hint: "Select gender",
+                prefixIcon: Icon(
+                  Icons.man_outlined,
+                  color: AppColors().grey800,
+                ),
+              ),
+              items: genderList.map((val) {
+                return DropdownMenuItem(
+                    value: val, child: AppText(text: val).getText());
+              }).toList(),
+              onChanged: (val) {
+                setState(() {
+                  selectedGender = val ?? "";
+                });
+              }),
           const SizedBox(
             height: 36,
           ),

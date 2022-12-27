@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pedometer/core/functions.dart';
+import 'package:pedometer/models/userFitModel.dart';
 import 'package:pedometer/models/userModel.dart';
+import 'package:pedometer/services/api/baseApi.dart';
 
 class UserApi {
   final CollectionReference usersCollection =
@@ -22,6 +24,11 @@ class UserApi {
       if (userCredential.user != null) {
         userModel.id = userCredential.user?.uid ?? "";
         await createUser(user: userModel);
+        await BaseApi().userFitApi.setUserFit(userFitModel: UserFitModel(
+          uid: userCredential.user?.uid ?? "",
+          id: DateTime.now().toString().substring(0,10),
+          timestamp: Timestamp.fromDate(DateTime.parse(DateTime.now().toString().substring(0,10)))
+        ));
         return userCredential;
       }
     } catch (e) {

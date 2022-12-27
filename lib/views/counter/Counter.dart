@@ -1,17 +1,20 @@
-import 'dart:io';
+import 'dart:async';
 import 'dart:math';
-import 'package:csv/csv.dart';
-import 'package:external_path/external_path.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:pedometer/core/appButtons.dart';
 import 'package:pedometer/core/appColors.dart';
+import 'package:pedometer/core/appDialog.dart';
 import 'package:pedometer/core/appText.dart';
 import 'package:pedometer/core/functions.dart';
 import 'package:pedometer/models/userFitModel.dart';
 import 'package:pedometer/services/api/baseApi.dart';
 import 'package:pedometer/services/api/countApi.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+
+import '../../controllers/userController.dart';
 
 class Counter extends StatefulWidget {
   const Counter({super.key});
@@ -22,13 +25,18 @@ class Counter extends StatefulWidget {
 
 class _CounterState extends State<Counter> {
   RxInt steps = 0.obs;
+  RxDouble stepSize = 2.5.obs;
   double prevMag = 0.0, prevX = 0.0, prevY = 0.0, prevZ = 0.0;
+  final UserController userController = Get.find(tag: 'uc-0');
   RxString mode = "Holding".obs;
   List<List<double>> data = [];
   bool start = false;
   double xGyro = 0.0;
   double yGyro = 0.0;
   double zGyro = 0.0;
+  ConnectivityResult _connectionStatus = ConnectivityResult.none;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   Future setCount() async {
     if (start) {
@@ -38,16 +46,55 @@ class _CounterState extends State<Counter> {
       // showAppSnackbar(title: "In counter", message: temp.length.toString());
       data.clear();
       // showAppSnackbar(title: "In counter", message: temp.length.toString());
-      int tempCount = await BaseApi().countApi.getCount(data: temp);
-      if (start) {
-        steps.value += tempCount;
+      int age = DateTime.now().year -
+          DateTime.parse(userController.authUser.value?.dob ?? "").year;
+
+      Map<String, dynamic>? res = await BaseApi().countApi.getCount(
+          data: temp,
+          age: age,
+          height: userController.authUser.value?.height ?? 0.0,
+          weight: userController.authUser.value?.weight ?? 0.0,
+          gender: userController.authUser.value?.gender == "Male"
+              ? 1
+              : userController.authUser.value?.gender == "Female"
+                  ? 0
+                  : 2);
+      if (start && res != null) {
+        int temp = res['count'];
+        double stepSize = res['step_size'];
+        // showAppSnackbar(title: "", message: res['step_size']?.toString()??"");
+        steps.value += temp;
+        stepSize = stepSize;
       }
     }
+  }
+
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+    // Platform messages may fail, so used a try/catch PlatformException.
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      return;
+    }
+    if (!mounted) {
+      return Future.value(null);
+    }
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    setState(() {
+      _connectionStatus = result;
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    initConnectivity();
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     gyroscopeEvents.listen((event) {
       if (start) {
         xGyro = event.x;
@@ -74,13 +121,19 @@ class _CounterState extends State<Counter> {
           mag,
           magDelta,
         ]);
-        // if (magDelta > 5) {
-        //   steps.value++;
-        // }
-        if (data.length > 99) {
-          // showAppSnackbar(title: "", message: "limit encountered");
-          setCount();
+
+        if (_connectionStatus != ConnectivityResult.none) {
+          if (data.length > 99) {
+            setCount();
+          }
+        } else {
+          // showAppSnackbar(title: "", message: "In offline mode");
+          data.clear();
+          if (magDelta > 5) {
+            steps.value++;
+          }
         }
+
         prevMag = mag;
         prevX = xAcc;
         prevY = yAcc;
@@ -89,15 +142,58 @@ class _CounterState extends State<Counter> {
     });
   }
 
-  void submitData() async {
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  void submitData(BuildContext context) async {
     UserFitModel? userFitModel = await BaseApi()
         .userFitApi
         .getUserFit(id: DateTime.now().toString().substring(0, 10));
     if (userFitModel != null) {
       userFitModel.steps += steps.value;
-      userFitModel.caloriesBurnt = userFitModel.steps * .35;
-      userFitModel.distanceWalked = userFitModel.steps * 0.00071;
+      userFitModel.distanceWalked =
+          userFitModel.steps * stepSize.value * 0.0003048;
+      userFitModel.caloriesBurnt = userFitModel.distanceWalked * 62;
+      showAppSnackbar(
+          title: "", message: userFitModel.distanceWalked.toString());
       BaseApi().userFitApi.setUserFit(userFitModel: userFitModel);
+      showAppDialog(
+          context: context,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            height: MediaQuery.of(context).size.height * 0.5,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: AppColors().white),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AppText(text: "Session completed!", style: "medium", size: 18)
+                    .getText(),
+                const SizedBox(
+                  height: 36,
+                ),
+                AppText(text: steps.value.toString(), style: "bold", size: 36)
+                    .getText(),
+                const SizedBox(
+                  height: 8,
+                ),
+                AppText(text: "steps  have been performed", size: 14).getText(),
+                const SizedBox(
+                  height: 36,
+                ),
+                AppButton(context: context).getTextButton(
+                    title: "Continue",
+                    onPressed: () {
+                      Navigator.pop(context);
+                    })
+              ],
+            ),
+          ));
     }
     resetValues();
   }
@@ -184,7 +280,7 @@ class _CounterState extends State<Counter> {
                 onPressed: () {
                   if (start) {
                     //submit
-                    submitData();
+                    submitData(context);
                   } else {
                     resetValues();
                   }

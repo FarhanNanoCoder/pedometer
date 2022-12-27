@@ -6,13 +6,13 @@ import '../../core/functions.dart';
 
 class UserFitApi {
   final FirebaseAuth auth = FirebaseAuth.instance;
-  final CollectionReference userFitCollection = FirebaseFirestore.instance
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
-      .collection("userFit");
+  // final CollectionReference userFitCollection = ;
 
   Stream<DocumentSnapshot> getUserFitAsStream({required String id}) {
-    return userFitCollection.doc(id).snapshots();
+    return FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
+      .collection("userFit").doc(id).snapshots();
   }
 
   Stream<QuerySnapshot>? getUserFitHistoryAsStream({int count = 7}) {
@@ -20,7 +20,10 @@ class UserFitApi {
       final Timestamp now = Timestamp.fromDate(DateTime.now());
       final Timestamp lastDay =
           Timestamp.fromDate(DateTime.now().subtract(Duration(days: count)));
-      return userFitCollection
+      return FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
+      .collection("userFit")
           // .orderBy("date", descending: true)
           .where('timestamp', isLessThan: now, isGreaterThan: lastDay)
           .snapshots();
@@ -32,7 +35,10 @@ class UserFitApi {
 
   Future<UserFitModel?> getUserFit({required String id}) async {
     try {
-      DocumentSnapshot doc = await userFitCollection.doc(id).get();
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
+      .collection("userFit").doc(id).get();
       if (doc.exists) {
         return UserFitModel.fromDocumentSnapshot(doc);
       } else {
@@ -45,7 +51,10 @@ class UserFitApi {
 
   Future setUserFit({required UserFitModel userFitModel}) async {
     try {
-      await userFitCollection
+      await FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser?.uid ?? "")
+      .collection("userFit")
           .doc(userFitModel.id ?? "")
           .set(userFitModel.toMap());
     } catch (e) {

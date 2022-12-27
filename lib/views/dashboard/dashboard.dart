@@ -7,6 +7,7 @@ import 'package:pedometer/core/appColors.dart';
 import 'package:pedometer/core/appText.dart';
 import 'package:pedometer/models/userFitModel.dart';
 import 'package:pedometer/services/api/baseApi.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DashBoard extends StatelessWidget {
   @override
@@ -180,6 +181,53 @@ class DashBoard extends StatelessWidget {
                     }
                   }
                 })),
+            const SizedBox(
+              height: 56,
+            ),
+            AppText(
+              text: 'Monthly report(Calory burn)',
+              style: 'semibold',
+              size: 18,
+            ).getText(),
+            const SizedBox(
+              height: 16,
+            ),
+            StreamBuilder(
+                stream:
+                    BaseApi().userFitApi.getUserFitHistoryAsStream(count: 30),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData ||
+                      snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors().themeColor,
+                      backgroundColor: AppColors().grey300,
+                    );
+                  } else {
+                    QuerySnapshot querySnapshot = snapshot.data!;
+                    List<UserFitModel> userFitList = [];
+                    querySnapshot.docs.forEach((element) {
+                      userFitList
+                          .add(UserFitModel.fromDocumentSnapshot(element));
+                    });
+                    return Container(
+                      child: SfCartesianChart(
+                        primaryXAxis: CategoryAxis(),
+                        legend: Legend(isVisible: true),
+                        tooltipBehavior: TooltipBehavior(enable: true),
+                        series: <LineSeries<UserFitModel, String>>[
+                          LineSeries<UserFitModel, String>(
+                              dataSource: userFitList,
+                              xValueMapper: (UserFitModel u, _) => u.id,
+                              yValueMapper: (UserFitModel u, _) =>
+                                  u.caloriesBurnt,
+                              dataLabelSettings:
+                                  DataLabelSettings(isVisible: true))
+                        ],
+                      ),
+                    );
+                  }
+                })
           ],
         ),
       ),
