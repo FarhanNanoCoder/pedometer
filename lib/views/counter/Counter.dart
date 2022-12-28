@@ -157,8 +157,8 @@ class _CounterState extends State<Counter> {
       userFitModel.distanceWalked =
           userFitModel.steps * stepSize.value * 0.0003048;
       userFitModel.caloriesBurnt = userFitModel.distanceWalked * 62;
-      showAppSnackbar(
-          title: "", message: userFitModel.distanceWalked.toString());
+      // showAppSnackbar(
+      //     title: "", message: userFitModel.distanceWalked.toString());
       BaseApi().userFitApi.setUserFit(userFitModel: userFitModel);
       showAppDialog(
           context: context,

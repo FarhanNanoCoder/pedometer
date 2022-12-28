@@ -29,7 +29,7 @@ class _AuthenticationState extends State<Authentication> {
   List<String> genderList = ["Male", "Female", "Other"];
   String selectedGender = "Male";
 
-  String dob = "";
+  String dob = DateTime.now().toString().substring(0, 10);
   final _emailController = TextEditingController();
   final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -163,7 +163,11 @@ class _AuthenticationState extends State<Authentication> {
                       color: AppColors().grey800,
                     ),
                     validator: (value) {
-                      return value != null && double.tryParse(value)! > 0.0
+                      return value != null &&
+                              value.trim() != "" &&
+                              double.parse(
+                                      _heightController.value.text.trim()) >
+                                  0.0
                           ? null
                           : 'Invalid height';
                     },
@@ -190,7 +194,11 @@ class _AuthenticationState extends State<Authentication> {
                       color: AppColors().grey800,
                     ),
                     validator: (value) {
-                      return value != null && double.tryParse(value)! > 0.0
+                      return value != null &&
+                              value.trim() != "" &&
+                              double.parse(
+                                      _weightController.value.text.trim())! >
+                                  0.0
                           ? null
                           : 'Invalid height';
                     },
@@ -207,6 +215,7 @@ class _AuthenticationState extends State<Authentication> {
                   ),
             !widget.isLoginState
                 ? DropdownButtonFormField(
+                    value: selectedGender,
                     decoration: AppInputField.getDefaultInputDecoration(
                       hint: "Select gender",
                       prefixIcon: Icon(
