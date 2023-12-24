@@ -6,4 +6,5 @@ Mobile application for tracking your steps and provide necessary calory burn inf
   <img src="https://github.com/FarhanNanoCoder/heartify/blob/main/h-b-1.jpg" width="200" />
   <img src="https://github.com/FarhanNanoCoder/heartify/blob/main/h-b-2.jpg" width="200" />
   <img src="https://github.com/FarhanNanoCoder/heartify/blob/main/h-b-3.jpg" width="200" />
+  <img src="https://github.com/FarhanNanoCoder/heartify/blob/main/h-b-4.jpg" width="200" />
 </p>
