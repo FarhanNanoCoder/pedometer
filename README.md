@@ -1,16 +1,9 @@
 # pedometer
 
-A new Flutter project.
+Mobile application for tracking your steps and provide necessary calory burn information with analytical graphs and reports in realtime. The backend uses two machine learning model, one for counting steps and another for calculating calory burn based on user age, gender and other factors.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<p float="left">
+  <img src="https://github.com/FarhanNanoCoder/heartify/blob/main/h-b-1.jpg" width="200" />
+  <img src="https://github.com/FarhanNanoCoder/heartify/blob/main/h-b-2.jpg" width="200" />
+  <img src="https://github.com/FarhanNanoCoder/heartify/blob/main/h-b-3.jpg" width="200" />
+</p>
